@@ -19,6 +19,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:visibility="gone"
             android:popupBackground="@color/button_bg_color"
             android:theme="@style/customSpinnerTheme"
             android:background="@drawable/spinner_selector"

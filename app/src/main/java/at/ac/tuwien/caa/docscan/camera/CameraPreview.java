@@ -141,10 +141,7 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         mMultiFormatReader.setHints(hints);
     }
 
-
     private void detectBarcode(byte[] pixels) {
-
-
         PlanarYUVLuminanceSource source = buildLuminanceSource(pixels);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         Result result = null;
@@ -532,8 +529,6 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
     }
 
     private PointF scalePoint(PointF point, int orientation) {
-
-
         float halfScreenWidth, halfScreenHeight;
 
         if (orientation == 0 || orientation == 180) {

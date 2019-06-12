@@ -521,10 +521,10 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
         initPictureCallback();
         initButtons();
 
-        requestLocation();
+//        requestLocation();
 
 //        Check app version:
-        checkAppVersion();
+//        checkAppVersion();
 
     }
 
@@ -941,7 +941,7 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
 
         initPhotoButton();
         initGalleryCallback();
-        initShootModeSpinner();
+//        initShootModeSpinner();
         updatePhotoButtonIcon();
         initCancelQRButton();
         initForceShootButton();
@@ -1081,7 +1081,7 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
         else
             msg = R.string.toast_single;
 
-        showToastText(msg);
+//        showToastText(msg);
     }
 
     private void updateShootModeSpinner() {
@@ -1333,16 +1333,16 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
      * speedup.
      * @param newConfig new configuration
      */
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-
-        Log.d(CLASS_NAME, "configuration changed");
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-
-        rotateCameraAndLayout();
-
-    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//
+//        Log.d(CLASS_NAME, "configuration changed");
+//        super.onConfigurationChanged(newConfig);
+//        mDrawerToggle.onConfigurationChanged(newConfig);
+//
+//        rotateCameraAndLayout();
+//
+//    }
 
     /**
      * Initializes an OrientEventListener that is used to detect orientation changes that are not

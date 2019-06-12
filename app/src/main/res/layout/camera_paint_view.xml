@@ -135,6 +135,7 @@
                     android:layout_height="wrap_content"
                     android:padding="3dp"
                     android:textColor="@color/white"
+                    android:visibility="gone"
                     android:background="@color/debug_view_bg_color"
                     android:textSize="16sp"
                     android:gravity="center"

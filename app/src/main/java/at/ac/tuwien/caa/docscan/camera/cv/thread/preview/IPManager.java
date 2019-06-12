@@ -172,6 +172,8 @@ public class IPManager implements ImageProcessor.ImageProcessorCallback {
 
                             Log.d(CLASS_NAME, "is new fake: TEST");
 
+                            Log.d(">>>", "mNoMoveCycles: " + mNoMoveCycles);
+
                             mCVCallback.onMovement(false);
 //                            Initialize the time if it is not initialized:
                             if (mLastSteadyTime == NO_TIME_SET) {
@@ -235,9 +237,10 @@ public class IPManager implements ImageProcessor.ImageProcessorCallback {
                             //                    Start the focus measurement:
 //                            createFocusProcessor(mat);
 
-                            if (mIsFocusMeasured)
+                            if (mIsFocusMeasured) {
+                                Log.d(">>>", "createProcessor in handleMessage");
                                 createProcessor(mat, ImageProcessor.ProcessorType.FOCUS);
-                            else {
+                            } else {
 
                                 //                        Start the verification task:
                                 if (mCVResult.getCVState() == CVResult.DOCUMENT_STATE_OK) {
@@ -335,8 +338,10 @@ public class IPManager implements ImageProcessor.ImageProcessorCallback {
 
                             //                    Start the focus measurement:
 
-                            if (mIsFocusMeasured)
+                            if (mIsFocusMeasured) {
+                                Log.d(">>>", "MESSAGE_PAGE_DETECTED_FOCUS");
                                 createProcessor(mat, ImageProcessor.ProcessorType.FOCUS);
+                            }
                             else {
                                 releaseMat(mat);
                                 processNextFrame();
@@ -345,12 +350,11 @@ public class IPManager implements ImageProcessor.ImageProcessorCallback {
                             break;
 
                         case MESSAGE_FOCUS_MEASURED:
+                            Log.d(CLASS_NAME, "handleMessage: onFocusMeasured 1");
 
-                            Log.d(CLASS_NAME, "handleMessage: onFocusMeasured");
-
-                            Bundle focusBundle = inputMessage.getData();
-                            Patch[] patches = (Patch[]) focusBundle.getParcelableArray(KEY_FOCUS);
-                            mCVCallback.onFocusMeasured(patches);
+//                            Bundle focusBundle = inputMessage.getData();
+//                            Patch[] patches = (Patch[]) focusBundle.getParcelableArray(KEY_FOCUS);
+//                            mCVCallback.onFocusMeasured(patches);
 
                             releaseMat(mat);
                             processNextFrame();
@@ -614,7 +618,7 @@ public class IPManager implements ImageProcessor.ImageProcessorCallback {
             return;
         }
 
-//        Log.d(CLASS_NAME, "createProcessor: " + type);
+        Log.d(CLASS_NAME, "createProcessor: " + type);
 
         switch (type) {
             case CHANGE:

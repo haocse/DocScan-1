@@ -81,27 +81,28 @@ public class StartActivity extends AppCompatActivity implements ActivityCompat.O
 
         super.onCreate(savedInstanceState);
 
-        if (getIntent().hasExtra(KEY_SHOW_INTRO)) {
-            if (getIntent().getBooleanExtra(KEY_SHOW_INTRO, false)) {
-                startIntro();
-                return;
-            }
-        }
+//        if (getIntent().hasExtra(KEY_SHOW_INTRO)) {
+//            if (getIntent().getBooleanExtra(KEY_SHOW_INTRO, false)) {
+//                startIntro();
+//                return;
+//            }
+//        }
 
-        logFirstAppStart();
+//        logFirstAppStart();
 
         //initialize Firebase
         FirebaseApp a = FirebaseApp.initializeApp(this);
         if (a == null || a.getOptions().getApiKey().isEmpty())
             Log.d(CLASS_NAME, getString(R.string.start_firebase_not_auth_text));
 
-        int lastInstalledVersion = Settings.getInstance().loadIntKey(this, Settings.SettingEnum.INSTALLED_VERSION_KEY);
+        /*int lastInstalledVersion = Settings.getInstance().loadIntKey(this, Settings.SettingEnum.INSTALLED_VERSION_KEY);
 //        The user has already started the app:
         if (lastInstalledVersion != Settings.NO_ENTRY)
             startAppNoIntro();
         else
-            startIntro();
+            startIntro();*/
 
+        startAppNoIntro();
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -213,8 +214,8 @@ public class StartActivity extends AppCompatActivity implements ActivityCompat.O
         int PERMISSION_ALL = 1;
         String[] PERMISSIONS = {
                 Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                ,Manifest.permission.ACCESS_FINE_LOCATION
         };
 
         if(!hasPermissions(this, PERMISSIONS)){
@@ -300,14 +301,18 @@ public class StartActivity extends AppCompatActivity implements ActivityCompat.O
 
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED)) {
-            showPermissionRequiredAlert(getResources().getString(
-                    R.string.start_permission_camera_text));
+//            showPermissionRequiredAlert(getResources().getString(
+//                    R.string.start_permission_camera_text));
+            Log.d(">>>", "!checkSelfPermission1");
+            finish();
             return;
         }
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-            showPermissionRequiredAlert(getResources().getString(
-                    R.string.start_permission_storage_text));
+//            showPermissionRequiredAlert(getResources().getString(
+//                    R.string.start_permission_storage_text));
+            finish();
+            Log.d(">>>", "!checkSelfPermission");
             return;
         }
 
