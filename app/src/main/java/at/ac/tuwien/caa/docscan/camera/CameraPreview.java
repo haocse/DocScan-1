@@ -61,6 +61,7 @@ import at.ac.tuwien.caa.docscan.ui.CameraActivity;
 import static android.hardware.Camera.Parameters.FLASH_MODE_OFF;
 import static android.hardware.Camera.Parameters.FLASH_MODE_TORCH;
 import static com.google.zxing.BarcodeFormat.QR_CODE;
+import static java.lang.Math.abs;
 
 
 /**
@@ -82,6 +83,9 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
 
     private int mFrameWidth;
     private int mFrameHeight;
+
+    public int mPictureWidth;
+    public int mPictureHeight;
 
     // This is used to setIsPaused the CV tasks for a short time after an image has been taken in series mode.
     // Prevents a shooting within a very short time range:
@@ -658,7 +662,13 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         List<Camera.Size> cameraSizes = params.getSupportedPreviewSizes();
 
         Camera.Size pictureSize = getLargestPictureSize();
-        params.setPictureSize(pictureSize.width, pictureSize.height);
+        mPictureWidth = pictureSize.width;
+        mPictureHeight = pictureSize.height;
+
+        params.setPictureSize(mPictureWidth, mPictureHeight);
+
+
+//        params.setPictureSize(800, 600);
 
 //        if (!mPreviewSizeSet) {
 //            Camera.Size bestSize = getBestFittingSize(cameraSizes, orientation);
@@ -670,10 +680,15 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         Camera.Size previewSize = getPreviewSize(cameraSizes, pictureSize);
         mFrameWidth = previewSize.width;
         mFrameHeight = previewSize.height;
+
+
+        Log.d(">>>frame", "width: " + mFrameWidth + " height: " + mFrameHeight);
+
         mIsPreviewFitting = isPreviewFitting(previewSize);
         useAutoFocus(params);
 
 
+//        params.setPreviewSize(mFrameWidth, mFrameHeight);
         params.setPreviewSize(mFrameWidth, mFrameHeight);
 
         List<String> flashModes = params.getSupportedFlashModes();
@@ -802,6 +817,10 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         }
     }
 
+    /**
+     * try to find best ratio... depends on screen ratio with the best size
+     * @return
+     */
     private Camera.Size getLargestPictureSize() {
 
         Camera.Size size = null;
@@ -811,13 +830,40 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         int area;
 
         for (Camera.Size s : supportedSizes) {
+            Log.d(">>>picture", "width: " + s.width + " height: " + s.height);
             area = s.width * s.height;
-            if (area > bestArea) {
-                bestArea = area;
-                size = s;
-            }
-        }
+//            if (area > bestArea) {
+//                bestArea = area;
+//                size = s;
+//            }
 
+//            2019-06-23 08:51:10.140 11108-11108/at.ac.tuwien.caa.docscan D/>>>picture: width: 1280 height: 640
+//            2019-06-23 08:51:10.140 11108-11108/at.ac.tuwien.caa.docscan D/>>>picture: 2.0 // POCOPHONE
+
+//            if (s.width == 4032 && s.height == 2268) size = s; // for testing
+            Log.d(">>>ee1", abs((float)s.width/(float) s.height) + "");
+            Log.d(">>>ee2", (float) 16/9 + "");
+            Log.d(">>>ee", "" + abs((float)s.width/s.height - (float) 16/9) );
+            if (abs((float)s.width/ s.height - (float) 16/9) < 0.01 && (area > bestArea)) {
+                Log.d(">>>gotit","...");
+                Log.d(">>>ee", "" + (float)s.width/(float) s.height);
+
+                size = s;
+                Log.d(">>>picture", "width: " + size.width + " height: " + size.height);
+
+                bestArea = area;
+//                break;
+            }; // for testing
+
+            float fl = (float) (float) s.width/s.height;
+//            Log.d(">>>", "")
+            Log.d(">>>picture",  String.valueOf(fl) + "");
+            Log.d(">>>pictureArea",  area + "");
+
+        }
+        Log.d(">>>picture", "width: " + size.width + " height: " + size.height);
+//        size.height = 720;
+//        size.height = 480;
         return size;
 
     }
@@ -877,6 +923,8 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         Camera.Size bestSize = null;
 //        First try to find an optimal ratio:
         for (Camera.Size size : previewSizes) {
+            Log.d(">>>previewSize", "width: " + size.width + " height: " + size.height);
+            Log.d(">>>previewSizeFrac", "" + (float)size.width/(float) size.height);
             ratio = (float) size.width / size.height;
             resArea = size.width * size.height;
 
@@ -894,7 +942,7 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
         for (Camera.Size size : previewSizes) {
             ratio = (float) size.width / size.height;
 
-            if ((Math.abs(ratio - optRatio) <= Math.abs(bestRatio - optRatio))) {
+            if ((abs(ratio - optRatio) <= abs(bestRatio - optRatio))) {
                 bestRatio = ratio;
                 bestSize = size;
             }
@@ -1014,6 +1062,29 @@ public class CameraPreview  extends SurfaceView implements SurfaceHolder.Callbac
 
     }
 
+    private int mRatioWidth = 0;
+    private int mRatioHeight = 0;
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        int width = MeasureSpec.getSize(widthMeasureSpec);
+//        int height = MeasureSpec.getSize(heightMeasureSpec);
+//        if (0 == mRatioWidth || 0 == mRatioHeight) {
+//            setMeasuredDimension(width, height);
+//        }
+//        setMeasuredDimension(500, 1600);
+//        int displayOrientation = CameraActivity.getDisplayRotation();
+//        int cameraOrienation = calculatePreviewOrientation(mCameraInfo, displayOrientation);
+//        mCameraPreviewCallback.onFrameDimensionChange(mFrameWidth, mFrameHeight, cameraOrienation);
+        Log.d(">>>dimen", mFrameHeight + "");
+    }
 
-
+    public void setAspectRatio(int width, int height) {
+        if (width < 0 || height < 0) {
+            throw new IllegalArgumentException("Size cannot be negative.");
+        }
+        mRatioWidth = width;
+        mRatioHeight = height;
+        requestLayout();
+    }
 }

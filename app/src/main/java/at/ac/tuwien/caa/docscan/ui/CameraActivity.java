@@ -76,6 +76,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -93,6 +94,10 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.zxing.Result;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Rect;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -227,6 +232,7 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
     private boolean mItemSelectedAutomatically = false;
     private int mLastDisplayRotation = - 1;
     private boolean mIsFocusMeasured;
+    private RelativeLayout mainFrame;
 
 
     // ================= start: methods from the Activity lifecycle =================
@@ -489,6 +495,10 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
 
         mCVResult.setSeriesMode(mIsSeriesMode);
 
+        mainFrame = findViewById(R.id.main_frame_layout);
+
+
+
         mCameraPreview = findViewById(R.id.camera_view);
 
         mPaintView = findViewById(R.id.paint_view);
@@ -506,7 +516,7 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
         });
         setSupportActionBar(toolbar);
         setupToolbar();
-        setupNavigationDrawer();
+//        setupNavigationDrawer();
         setupDebugView();
 
         initOrientationListener();
@@ -1198,6 +1208,8 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
 //        if (!mIsPictureSafe)
 //            return;
 
+
+
         mIsPictureSafe = false;
         Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
             @Override
@@ -1323,8 +1335,8 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        if (mDrawerToggle != null)
-            mDrawerToggle.syncState();
+//        if (mDrawerToggle != null)
+//            mDrawerToggle.syncState();
     }
 
     /**
@@ -2340,9 +2352,12 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
      * @param height            height of the frame
      * @param cameraOrientation orientation of the camera
      */
+
+    float mRatio = (float)16/9;
     @Override
     public void onFrameDimensionChange(int width, int height, int cameraOrientation) {
 
+        mRatio = (float) width/height;
         mCameraOrientation = cameraOrientation;
         mCVResult.setFrameDimensions(width, height, cameraOrientation);
 
@@ -2590,18 +2605,53 @@ public class CameraActivity extends BaseNavigationActivity implements TaskTimer.
 
             try {
 
+                final float[] ratio = {(float) 16 / 9};
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        ratio[0] = (float) mainFrame.getHeight() / mainFrame.getWidth();
                         mGalleryButton.setVisibility(View.INVISIBLE);
                         mProgressBar.setVisibility(View.VISIBLE);
                     }
                 });
 
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(mData);
+//                FileOutputStream fos = new FileOutputStream(file);
+//                fos.write(mData);
+//
+//                fos.close();
 
-                fos.close();
+                // how to crop image here based on mainFrame..
+//                1.22
+
+                Log.d(">>>frac","" + ratio[0]);
+
+                /*
+                get width and height.
+                image (16/9) -> width --- height
+                n ima: 1.22 -> n_width --- ? n_height
+
+                => n_height => height*1.22 / (float)16/9 = ...
+                 */
+
+
+                // byte array to mat
+                Mat uncropped = Imgcodecs.imdecode(new MatOfByte(mData), Imgcodecs.CV_LOAD_IMAGE_UNCHANGED);
+
+//                float frameRatio = ((float) mCameraPreview.mPictureHeight/mCameraPreview.mPictureWidth);
+                float floatToCrop = ratio[0]/((float) 16/9);
+
+                Log.d(">>>frameRatio", "frameRatio: " + ratio[0]);
+                Log.d(">>>floatToCrop", "floatToCrop: " + floatToCrop);
+                float newWidth = (mCameraPreview.mPictureWidth*floatToCrop);
+//                Mat uncropped = getUncroppedImage();
+                Log.d(">>>width", "height: " + mCameraPreview.mPictureWidth);
+                Log.d(">>>width", "new height: " + newWidth);
+
+
+                Rect roi = new Rect(0, 0, Math.round(newWidth), mCameraPreview.mPictureHeight);
+                Mat cropped = new Mat(uncropped, roi);
+
+                Imgcodecs.imwrite(file.getAbsolutePath(), cropped);
 
                 // Save exif information (especially the orientation):
                 saveExif(file);

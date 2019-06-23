@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:id="@+id/camera_controls_layout"
     android:background="@color/control_background_color"
-    android:layout_height="@dimen/camera_control_height_width"
-    android:layout_alignParentBottom="true"
+    android:layout_height="0dp"
     >
 
     <RelativeLayout

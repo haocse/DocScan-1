@@ -25,6 +25,7 @@ package at.ac.tuwien.caa.docscan.camera;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 public class CameraPaintLayout extends FrameLayout {
@@ -65,6 +66,19 @@ public class CameraPaintLayout extends FrameLayout {
                 if (scaledHeight > height)
                     scaledHeight = height;
                 setMeasuredDimension(width, scaledHeight);
+//                setMeasuredDimension(width, height);
+
+                Log.d(">>>scaledHeight", scaledHeight+ "");
+                Log.d(">>>scaledHeight1", height+ "");
+
+//                double resizeFac = (double) height / mFrameHeight;
+//                int scaledWidth = (int) Math.round(mFrameWidth * resizeFac);
+//                Log.d(">>>scaledWidth", scaledWidth+ "");
+//                Log.d(">>>width", width+ "");
+//                if (scaledWidth > width)
+//                    scaledWidth = width;
+//                setMeasuredDimension(scaledWidth, height);
+//                setMeasuredDimension(1000, 1000);
             }
 
             // Landscape mode:
@@ -88,8 +102,11 @@ public class CameraPaintLayout extends FrameLayout {
 //        }
 
         mCameraPreviewCallback.onMeasuredDimensionChange(getMeasuredWidth(), getMeasuredHeight());
+//        mCameraPreviewCallback.onMeasuredDimensionChange(getMeasuredWidth(), 500);
 
     }
+
+
 
 
 

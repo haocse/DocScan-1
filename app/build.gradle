@@ -148,6 +148,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-core-utils'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
     }
+	implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 }
 repositories {
     mavenCentral()

@@ -87,28 +87,28 @@ public abstract class BaseNavigationActivity extends AppCompatActivity implement
     protected void onPostCreate(Bundle savedInstanceState) {
 
         super.onPostCreate(savedInstanceState);
-        mNavigationDrawer = new NavigationDrawer(this, getSelfNavDrawerItem());
-
-        //        Check if a user has logged in in a previous session and use the credentials for login:
-        // TODO: put this in the StartActivity (here it is just used for debugging purposes).
-
-        if (User.getInstance().isLoggedIn())
-            return;
-
-        boolean isUserSaved = UserHandler.loadCredentials(this);
-        if (isUserSaved && !User.getInstance().isAutoLogInDone()) {
-
-            if (User.getInstance().getConnection() == User.SYNC_TRANSKRIBUS) {
-                RequestHandler.createRequest(this, RequestHandler.REQUEST_LOGIN);
-                User.getInstance().setAutoLogInDone(true);
-            }
-            else if (User.getInstance().getConnection() == User.SYNC_DROPBOX) {
-                if (UserHandler.loadDropboxToken(this)) {
-                    DropboxUtils.getInstance().loginToDropbox(this, User.getInstance().getDropboxToken());
-                    User.getInstance().setAutoLogInDone(true);
-                }
-            }
-        }
+//        mNavigationDrawer = new NavigationDrawer(this, getSelfNavDrawerItem());
+//
+//        //        Check if a user has logged in in a previous session and use the credentials for login:
+//        // TODO: put this in the StartActivity (here it is just used for debugging purposes).
+//
+//        if (User.getInstance().isLoggedIn())
+//            return;
+//
+//        boolean isUserSaved = UserHandler.loadCredentials(this);
+//        if (isUserSaved && !User.getInstance().isAutoLogInDone()) {
+//
+//            if (User.getInstance().getConnection() == User.SYNC_TRANSKRIBUS) {
+//                RequestHandler.createRequest(this, RequestHandler.REQUEST_LOGIN);
+//                User.getInstance().setAutoLogInDone(true);
+//            }
+//            else if (User.getInstance().getConnection() == User.SYNC_DROPBOX) {
+//                if (UserHandler.loadDropboxToken(this)) {
+//                    DropboxUtils.getInstance().loginToDropbox(this, User.getInstance().getDropboxToken());
+//                    User.getInstance().setAutoLogInDone(true);
+//                }
+//            }
+//        }
 
     }
 
